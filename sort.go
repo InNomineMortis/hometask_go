@@ -7,7 +7,7 @@ import (
 	"io/ioutil"
 	"os"
 	"sort"
-	"strings"
+	//"strings"
 )
 
 func main() {
@@ -28,6 +28,7 @@ func main() {
 		flags[v.Name] = flag.Bool(v.Name, v.Value, v.Usage)
 	}
 
+	//exist := make(map[string]bool) //Словарь имеющихся слов
 	intPtr := flag.Int("k", 0, "column")
 	filePtr := flag.String("o", "output.txt", "in file, otherwise in stdout")
 
@@ -44,10 +45,14 @@ func main() {
 		order = 1
 	}
 	strs := bytes.Split(file, []byte("\n"))
-
+	//if *flags["u"] {
+	//	for v,_ := range strs {
+	//		lowerStrs = strings.ToLower(string(strs[v]))
+	//	}
+	//}
 	if *flags["f"] {
 		sort.Slice(strs, func(i, j int) bool {
-			return strings.Compare(strings.ToLower(string(strs[i])), strings.ToLower(string(strs[j]))) == order
+			return bytes.Compare(bytes.ToLower(strs[i]), bytes.ToLower(strs[j])) == order
 		})
 	} else {
 		sort.Slice(strs, func(i, j int) bool {
