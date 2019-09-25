@@ -1,0 +1,10 @@
+abcd
+bacd
+bcad
+bdac
+cdac
+cadc
+cacd
+dcba
+dbac
+dcab
