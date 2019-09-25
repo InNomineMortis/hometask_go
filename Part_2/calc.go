@@ -5,6 +5,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"math"
 )
 
 var opList = map[string]int{
@@ -69,7 +70,7 @@ func Parsing(input string) string {
 
 func calculate(rpn string) float64 {
 	res := strings.Split(rpn, " ")
-	stack := make([]int, 1)
+	stack := make([]float64, 1)
 	for _, v := range res {
 		num, err := strconv.Atoi(v)
 		if err != nil {
@@ -84,13 +85,13 @@ func calculate(rpn string) float64 {
 				}
 			}
 		} else {
-			stack = append(stack, num)
+			stack = append(stack, float64(num))
 		}
 	}
 	finRes, _ := pop(stack)
 	return float64(finRes)
 }
-func equation(op string, stack []int) []int {
+func equation(op string, stack []float64) []float64 {
 	x, stack := pop(stack)
 	y, stack := pop(stack)
 	pop(stack)
@@ -101,20 +102,21 @@ func equation(op string, stack []int) []int {
 		if y == 0 {
 			panic("Division zero")
 		}
-		return append(stack, x/y)
+		return append(stack, y/x)
 	case "+":
 		return append(stack, x+y)
 	case "-":
-		return append(stack, x-y)
+		return append(stack, y-x)
 	case "^":
-		return append(stack, x^y)
+		return append(stack, math.Pow(y,x))
 	}
 	return nil
 }
 
-func pop(stack []int) (int, []int) {
+func pop(stack []float64) (float64, []float64) {
 	return stack[len(stack)-1], stack[:len(stack)-1]
 }
+
 func main() {
 	res := Parsing(os.Args[1])
 	fmt.Println(calculate(res))
