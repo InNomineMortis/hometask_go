@@ -87,11 +87,11 @@ func calculate(rpn string) float64 {
 			stack = append(stack, num)
 		}
 	}
-	finRes,_ := pop(stack)
+	finRes, _ := pop(stack)
 	return float64(finRes)
 }
 func equation(op string, stack []int) []int {
-	x, stack :=	pop(stack)
+	x, stack := pop(stack)
 	y, stack := pop(stack)
 	pop(stack)
 	switch op {
