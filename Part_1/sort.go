@@ -10,18 +10,13 @@ import (
 	"strings"
 )
 
-func sorting(fileName string, flags map[string]*bool, col int) [][]byte {
-	file, err := ioutil.ReadFile("Text/" + fileName)
-	if err != nil {
-		fmt.Println("Couldn't open file! : ", err)
-		os.Exit(1)
-	}
+func sorting(strs [][]byte, flags map[string]*bool, col int) [][]byte {
+
 	order := -1
 	if *flags["r"] {
 		order = 1
 	}
 
-	strs := bytes.Split(file, []byte("\n"))
 	if *flags["u"] {
 		if *flags["f"] {
 			sort.Slice(strs, func(i, j int) bool {
@@ -88,7 +83,16 @@ func main() {
 	filePtr := flag.String("o", "stdout", "in file, otherwise in stdout")
 	flag.Parse()
 
-	outStrs := sorting(os.Args[len(os.Args)-1], flags, *intPtr)
+	file, err := ioutil.ReadFile(os.Args[len(os.Args)-1])
+
+	if err != nil {
+		fmt.Println("Couldn't open file! : ", err)
+		os.Exit(1)
+	}
+
+	strs := bytes.Split(file, []byte("\n"))
+
+	outStrs := sorting(strs, flags, *intPtr)
 
 	if *filePtr != "stdout" {
 		outFile, err := os.Create("Text/" + *filePtr)
