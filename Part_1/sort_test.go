@@ -12,15 +12,19 @@ import (
 func TestSorting(t *testing.T) {
 	p := new(bool)
 	*p = false
-	flags := params{
+	o := new(string)
+	*o = "stdout"
+	k:= new(int)
+	*k = 0
+	flags = params{
 		Reverse: p,
 		Numerals: p,
 		Unique: p,
-		Column: flag.Int("k", 0, "column"),
-		Output: flag.String("o", "stdout", "outfile"),
+		Column: k,
+		Output: o,
 		Register: p,
 	}
-	file, err := ioutil.ReadFile("Text/test.txt")
+	file, err := ioutil.ReadFile("test.txt")
 	if err != nil {
 		fmt.Println("Couldn't open file! : ", err)
 		os.Exit(1)
@@ -28,7 +32,7 @@ func TestSorting(t *testing.T) {
 	strs := bytes.Split(file, []byte("\n"))
 	sorted := sorting(strs, flags)
 
-	file, err = ioutil.ReadFile("Text/sorted_test.txt")
+	file, err = ioutil.ReadFile("sorted_test.txt")
 	if err != nil {
 		fmt.Println("Couldn't open file! : ", err)
 		os.Exit(1)
@@ -50,7 +54,7 @@ func TestSorting_fru(t *testing.T) {
 	*o = "stdout"
 	k:= new(int)
 	*k = 0
-	flags := params{
+	flags = params{
 		Reverse: p,
 		Numerals: p,
 		Unique: p,
@@ -60,7 +64,7 @@ func TestSorting_fru(t *testing.T) {
 	}
 	flag.Parse()
 
-	file, err := ioutil.ReadFile("Text/test.txt")
+	file, err := ioutil.ReadFile("test.txt")
 	if err != nil {
 		fmt.Println("Couldn't open file! : ", err)
 		os.Exit(1)
@@ -69,7 +73,7 @@ func TestSorting_fru(t *testing.T) {
 	strs := bytes.Split(file, []byte("\n"))
 	sorted := sorting(strs, flags)
 
-	file, err = ioutil.ReadFile("Text/sorted_test_f,r,u.txt")
+	file, err = ioutil.ReadFile("sorted_test_f,r,u.txt")
 	if err != nil {
 		fmt.Println("Couldn't open file! : ", err)
 		os.Exit(1)

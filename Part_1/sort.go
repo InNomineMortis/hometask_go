@@ -12,11 +12,20 @@ import (
 
 type params = struct {
 	Reverse  *bool
-	Unique *bool
+	Unique   *bool
 	Register *bool
 	Numerals *bool
-	Output *string
-	Column *int
+	Output   *string
+	Column   *int
+}
+
+var flags = params{
+	Reverse:  flag.Bool("r", false, "reverse"),
+	Numerals: flag.Bool("n", false, "numerals"),
+	Unique:   flag.Bool("u", false, "unique"),
+	Column:   flag.Int("k", 0, "column"),
+	Output:   flag.String("o", "stdout", "outfile"),
+	Register: flag.Bool("f", false, "numerals"),
 }
 
 func sorting(strs [][]byte, flags params) [][]byte {
@@ -70,14 +79,7 @@ func sorting(strs [][]byte, flags params) [][]byte {
 }
 
 func main() {
-	flags := params{
-		Reverse: flag.Bool("r", false, "reverse"),
-		Numerals: flag.Bool("n", false, "numerals"),
-		Unique: flag.Bool("u", false, "unique"),
-		Column: flag.Int("k", 0, "column"),
-		Output: flag.String("o", "stdout", "outfile"),
-		Register: flag.Bool("f", false, "numerals"),
-	}
+
 	flag.Parse()
 	file, err := ioutil.ReadFile(os.Args[len(os.Args)-1])
 
@@ -88,7 +90,7 @@ func main() {
 
 	strs := bytes.Split(file, []byte("\n"))
 
-	outStrs := sorting(strs,flags)
+	outStrs := sorting(strs, flags)
 
 	if *flags.Output != "stdout" {
 		outFile, err := os.Create("Text/" + *flags.Output)
