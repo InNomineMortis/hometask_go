@@ -10,20 +10,23 @@ import (
 )
 
 func TestSorting(t *testing.T) {
-	var flags = params{
-		{Name: "f", Value: flag.Bool("f", false, "register")},
-		{Name: "u", Value: flag.Bool("u", false, "unique")},
-		{Name: "r", Value: flag.Bool("r", false, "reverse")},
-		{Name: "n", Value: flag.Bool("n", false, "numerals")},
+	p := new(bool)
+	*p = false
+	flags := params{
+		Reverse: p,
+		Numerals: p,
+		Unique: p,
+		Column: flag.Int("k", 0, "column"),
+		Output: flag.String("o", "stdout", "outfile"),
+		Register: p,
 	}
-	col := 0
 	file, err := ioutil.ReadFile("Text/test.txt")
 	if err != nil {
 		fmt.Println("Couldn't open file! : ", err)
 		os.Exit(1)
 	}
 	strs := bytes.Split(file, []byte("\n"))
-	sorted := sorting(strs, flags, col)
+	sorted := sorting(strs, flags)
 
 	file, err = ioutil.ReadFile("Text/sorted_test.txt")
 	if err != nil {
@@ -43,14 +46,18 @@ func TestSorting(t *testing.T) {
 func TestSorting_fru(t *testing.T) {
 	p := new(bool)
 	*p = true
-	var flags = params{
-		{Name: "f", Value: p},
-		{Name: "u", Value: p},
-		{Name: "r", Value: p},
-		{Name: "n", Value: p},
+	o := new(string)
+	*o = "stdout"
+	k:= new(int)
+	*k = 0
+	flags := params{
+		Reverse: p,
+		Numerals: p,
+		Unique: p,
+		Column: k,
+		Output: o,
+		Register: p,
 	}
-	col := 0
-
 	flag.Parse()
 
 	file, err := ioutil.ReadFile("Text/test.txt")
@@ -60,7 +67,7 @@ func TestSorting_fru(t *testing.T) {
 	}
 
 	strs := bytes.Split(file, []byte("\n"))
-	sorted := sorting(strs, flags, col)
+	sorted := sorting(strs, flags)
 
 	file, err = ioutil.ReadFile("Text/sorted_test_f,r,u.txt")
 	if err != nil {

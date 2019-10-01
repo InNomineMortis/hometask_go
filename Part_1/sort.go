@@ -10,22 +10,25 @@ import (
 	"strings"
 )
 
-type params = []struct {
-	Name  string
-	Value *bool
+type params = struct {
+	Reverse  *bool
+	Unique *bool
+	Register *bool
+	Numerals *bool
+	Output *string
+	Column *int
 }
 
-func sorting(strs [][]byte, flags params, col int) [][]byte {
-
+func sorting(strs [][]byte, flags params) [][]byte {
 	order := -1
-	if *flags[2].Value {
+	if *flags.Reverse {
 		order = 1
 	}
 
-	if *flags[1].Value {
-		if *flags[0].Value {
+	if *flags.Unique {
+		if *flags.Register {
 			sort.Slice(strs, func(i, j int) bool {
-				return strings.Compare(strings.ToLower(string(string(strs[i])[col])), strings.ToLower(string(string(strs[j])[col]))) == order
+				return strings.Compare(strings.ToLower(string(string(strs[i])[*flags.Column])), strings.ToLower(string(string(strs[j])[*flags.Column]))) == order
 			})
 			strs1 := make([][]byte, len(strs))
 			copy(strs1, strs)
@@ -39,7 +42,7 @@ func sorting(strs [][]byte, flags params, col int) [][]byte {
 			})
 		} else {
 			sort.Slice(strs, func(i, j int) bool {
-				return strings.Compare(string(string(strs[i])[col]), string(string(strs[j])[col])) == order
+				return strings.Compare(string(string(strs[i])[*flags.Column]), string(string(strs[j])[*flags.Column])) == order
 			})
 			strs1 := make([][]byte, len(strs))
 			copy(strs1, strs)
@@ -53,13 +56,13 @@ func sorting(strs [][]byte, flags params, col int) [][]byte {
 			})
 		}
 	} else {
-		if *flags[0].Value {
+		if *flags.Register {
 			sort.Slice(strs, func(i, j int) bool {
-				return strings.Compare(strings.ToLower(string(string(strs[i])[col])), strings.ToLower(string(string(strs[j])[col]))) == order
+				return strings.Compare(strings.ToLower(string(string(strs[i])[*flags.Column])), strings.ToLower(string(string(strs[j])[*flags.Column]))) == order
 			})
 		} else {
 			sort.Slice(strs, func(i, j int) bool {
-				return strings.Compare(string(string(strs[i])[col]), string(string(strs[j])[col])) == order
+				return strings.Compare(string(string(strs[i])[*flags.Column]), string(string(strs[j])[*flags.Column])) == order
 			})
 		}
 	}
@@ -67,14 +70,14 @@ func sorting(strs [][]byte, flags params, col int) [][]byte {
 }
 
 func main() {
-	var flags = params{
-		{Name: "f", Value: flag.Bool("f", false, "register")},
-		{Name: "u", Value: flag.Bool("u", false, "unique")},
-		{Name: "r", Value: flag.Bool("r", false, "reverse")},
-		{Name: "n", Value: flag.Bool("n", false, "numerals")},
+	flags := params{
+		Reverse: flag.Bool("r", false, "reverse"),
+		Numerals: flag.Bool("n", false, "numerals"),
+		Unique: flag.Bool("u", false, "unique"),
+		Column: flag.Int("k", 0, "column"),
+		Output: flag.String("o", "stdout", "outfile"),
+		Register: flag.Bool("f", false, "numerals"),
 	}
-	intPtr := flag.Int("k", 0, "column")
-	filePtr := flag.String("o", "stdout", "in file, otherwise in stdout")
 	flag.Parse()
 	file, err := ioutil.ReadFile(os.Args[len(os.Args)-1])
 
@@ -85,10 +88,10 @@ func main() {
 
 	strs := bytes.Split(file, []byte("\n"))
 
-	outStrs := sorting(strs,flags, *intPtr)
+	outStrs := sorting(strs,flags)
 
-	if *filePtr != "stdout" {
-		outFile, err := os.Create("Text/" + *filePtr)
+	if *flags.Output != "stdout" {
+		outFile, err := os.Create("Text/" + *flags.Output)
 		if err != nil {
 			fmt.Println("Unable to create file:", err)
 			os.Exit(1)
