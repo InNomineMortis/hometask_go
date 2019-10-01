@@ -76,7 +76,6 @@ func main() {
 	intPtr := flag.Int("k", 0, "column")
 	filePtr := flag.String("o", "stdout", "in file, otherwise in stdout")
 	flag.Parse()
-	fmt.Println(flags[2].Value, flags[2].Name)
 	file, err := ioutil.ReadFile(os.Args[len(os.Args)-1])
 
 	if err != nil {
