@@ -10,15 +10,20 @@ import (
 	"strings"
 )
 
-func sorting(strs [][]byte, flags map[string]*bool, col int) [][]byte {
+type params = []struct {
+	Name  string
+	Value *bool
+}
+
+func sorting(strs [][]byte, flags params, col int) [][]byte {
 
 	order := -1
-	if *flags["r"] {
+	if *flags[2].Value {
 		order = 1
 	}
 
-	if *flags["u"] {
-		if *flags["f"] {
+	if *flags[1].Value {
+		if *flags[0].Value {
 			sort.Slice(strs, func(i, j int) bool {
 				return strings.Compare(strings.ToLower(string(string(strs[i])[col])), strings.ToLower(string(string(strs[j])[col]))) == order
 			})
@@ -48,7 +53,7 @@ func sorting(strs [][]byte, flags map[string]*bool, col int) [][]byte {
 			})
 		}
 	} else {
-		if *flags["f"] {
+		if *flags[0].Value {
 			sort.Slice(strs, func(i, j int) bool {
 				return strings.Compare(strings.ToLower(string(string(strs[i])[col])), strings.ToLower(string(string(strs[j])[col]))) == order
 			})
@@ -62,27 +67,16 @@ func sorting(strs [][]byte, flags map[string]*bool, col int) [][]byte {
 }
 
 func main() {
-	params := []struct {
-		Name  string
-		Value bool
-		Usage string
-	}{
-		{Name: "f", Value: false, Usage: "ignore letters size"},
-		{Name: "u", Value: false, Usage: "show only first"},
-		{Name: "r", Value: false, Usage: "from biggest to lowest"},
-		{Name: "n", Value: false, Usage: "numerals sort"},
+	var flags = params{
+		{Name: "f", Value: flag.Bool("f", false, "register")},
+		{Name: "u", Value: flag.Bool("u", false, "unique")},
+		{Name: "r", Value: flag.Bool("r", false, "reverse")},
+		{Name: "n", Value: flag.Bool("n", false, "numerals")},
 	}
-
-	flags := make(map[string]*bool)
-
-	for _, v := range params {
-		flags[v.Name] = flag.Bool(v.Name, v.Value, v.Usage)
-	}
-
 	intPtr := flag.Int("k", 0, "column")
 	filePtr := flag.String("o", "stdout", "in file, otherwise in stdout")
 	flag.Parse()
-
+	fmt.Println(flags[2].Value, flags[2].Name)
 	file, err := ioutil.ReadFile(os.Args[len(os.Args)-1])
 
 	if err != nil {
@@ -92,7 +86,7 @@ func main() {
 
 	strs := bytes.Split(file, []byte("\n"))
 
-	outStrs := sorting(strs, flags, *intPtr)
+	outStrs := sorting(strs,flags, *intPtr)
 
 	if *filePtr != "stdout" {
 		outFile, err := os.Create("Text/" + *filePtr)

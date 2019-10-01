@@ -10,30 +10,18 @@ import (
 )
 
 func TestSorting(t *testing.T) {
-	params := []struct {
-		Name  string
-		Value bool
-		Usage string
-	}{
-		{Name: "f", Value: false, Usage: "ignore letters size"},
-		{Name: "u", Value: false, Usage: "show only first"},
-		{Name: "r", Value: false, Usage: "from biggest to lowest"},
-		{Name: "n", Value: false, Usage: "numerals sort"},
-	}
-
-	flags := make(map[string]*bool)
-
-	for _, v := range params {
-		flags[v.Name] = flag.Bool(v.Name, v.Value, v.Usage)
+	var flags = params{
+		{Name: "f", Value: flag.Bool("f", false, "register")},
+		{Name: "u", Value: flag.Bool("u", false, "unique")},
+		{Name: "r", Value: flag.Bool("r", false, "reverse")},
+		{Name: "n", Value: flag.Bool("n", false, "numerals")},
 	}
 	col := 0
-
 	file, err := ioutil.ReadFile("Text/test.txt")
 	if err != nil {
 		fmt.Println("Couldn't open file! : ", err)
 		os.Exit(1)
 	}
-
 	strs := bytes.Split(file, []byte("\n"))
 	sorted := sorting(strs, flags, col)
 
@@ -53,11 +41,14 @@ func TestSorting(t *testing.T) {
 }
 
 func TestSorting_fru(t *testing.T) {
-
-	flags := make(map[string]*bool)
-	flags["u"] = flag.Bool("U", true, "unique")
-	flags["f"] = flag.Bool("F", true, "register")
-	flags["r"] = flag.Bool("R", true, "reverse")
+	p := new(bool)
+	*p = true
+	var flags = params{
+		{Name: "f", Value: p},
+		{Name: "u", Value: p},
+		{Name: "r", Value: p},
+		{Name: "n", Value: p},
+	}
 	col := 0
 
 	flag.Parse()
